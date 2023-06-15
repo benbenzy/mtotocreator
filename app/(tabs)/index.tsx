@@ -1,17 +1,19 @@
 import {
 	Alert,
+	Button,
 	Dimensions,
 	FlatList,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
-import React from "react";
+import * as React from "react";
 
 import EditScreenInfo from "../../components/EditScreenInfo";
-import { ThemeText, ThemeView } from "../../components/Themed";
+import { ContainerView, ThemeText, ThemeView } from "../../components/Themed";
 //import  selectPlans  from "../../store/plans/planSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -29,10 +31,14 @@ import { SIZES } from "../../constants";
 import { COLORS } from "../../constants/theme";
 import PlanCard from "../../components/HomeComponents/PlanCard";
 import BookCard from "../../components/HomeComponents/BookCard";
+import SearchBar from "../../components/HomeComponents/SearchBar";
+import AnalyticsCard from "../../components/HomeComponents/analyticsCard";
+import ArticlesCard from "../../components/HomeComponents/ArticlesCard";
+import { TOKEN } from "../../lib/api/config";
 
 export default function HomeScreen() {
-	const dispatch = useDispatch();
-	const router = useRouter();
+	
+
 	const title = () => {
 		return (
 			<ThemeText style={{ fontSize: 20, fontWeight: "bold" }}>
@@ -43,59 +49,46 @@ export default function HomeScreen() {
 	return (
 		<ThemeView style={styles.container}>
 			<Stack.Screen options={{ headerTitle: title }} />
-			<ThemeView
-				style={{
-					flexDirection: "row",
-					width: "90%",
-					//backgroundColor: ,
-					height: 50,
-					justifyContent: "space-between",
-					alignItems: "center",
-					borderRadius: 10,
+			<SearchBar />
+			
+			<ScrollView
+				contentContainerStyle={{
+					alignSelf: "center",
+					//alignItems: "center",
+					//justifyContent: 'center',
+					//width:"100%",
 				}}
 			>
-				<TextInput
-					placeholder="Search your books/plans"
-					inlineImageLeft="search"
-					style={{
-						backgroundColor: "lightgray",
-						width: "85%",
-						borderRadius: 10,
-						height: 40,
-					}}
-				/>
-				<ThemeView
-					style={{ borderRadius: 10, backgroundColor: "#FF7754", height: 40 }}
+				<HomeCard
+					title="progress"
+					subheader="This month"
+					subheaderStyles={{ fontSize: 10 }}
+					onpress={undefined}
+					containerStyles={{ width: "95%" }}
 				>
-					<Ionicons name="search" size={40} color="#F0DB4F" />
-				</ThemeView>
-			</ThemeView>
-			<PlanCard />
-			<BookCard/>
-			<TouchableOpacity style={{ position: "absolute", right: 10, bottom: 10 }}>
-				<MaterialIcons name="post-add" size={50} color={COLORS.darkBlue}/>
-			</TouchableOpacity>
-			<TouchableOpacity
-				onPress={() => {
-					Alert.alert("clear all", "do you want to clear all plans", [
-						{
-							text: "cancel",
-							onPress: () => {
-								return;
-							},
-						},
-						{
-							text: "ok",
-							onPress: () => {
-								dispatch(clearAll());
-							},
-						},
-					]);
-				}}
-				style={{ position: "absolute", left: 10, bottom: 10 }}
-			>
-				<ThemeText>clear all</ThemeText>
-			</TouchableOpacity>
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+					>
+						<AnalyticsCard
+							title={"plans"}
+							data={"300"}
+							dataDescription={"enrollment"}
+						/>
+						<AnalyticsCard
+							title={"books"}
+							data={"200"}
+							dataDescription={"purchases"}
+						/>
+					</View>
+				</HomeCard>
+				<ArticlesCard />
+				<PlanCard />
+				<BookCard />
+			</ScrollView>
 		</ThemeView>
 	);
 }
@@ -104,6 +97,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: "center",
+		//width:"100%"
 		//backgroundColor: Colors.dark.background,
 	},
 	title: {

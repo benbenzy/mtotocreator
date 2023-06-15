@@ -1,6 +1,7 @@
 import {
 	Dimensions,
 	KeyboardAvoidingView,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -69,6 +70,7 @@ export default function CreatePlan() {
 	const disabled = !title || !description || !category || !price;
 	return (
 		<ThemeView style={styles.main}>
+			<ScrollView>
 			<ThemeView>
 				<ThemeText style={styles.title}>plan title:</ThemeText>
 				<TextInput
@@ -105,7 +107,7 @@ export default function CreatePlan() {
 				/>
 			</ThemeView>
 
-			<ThemeView style={{ marginTop: 60 }}>
+			<ThemeView style={{ marginTop: 30 }}>
 				<ThemeText style={styles.title}>category:</ThemeText>
 				<Picker
 					style={{
@@ -124,6 +126,7 @@ export default function CreatePlan() {
 					))}
 				</Picker>
 			</ThemeView>
+			</ScrollView>
 
 			<TouchableOpacity
 				disabled={disabled}

@@ -17,7 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 function BookCard() {
 	const router = useRouter();
-	const draftPlans = useSelector((state: any) => state.plans.draftPlans);
+	const draftPlans = useSelector((state: any) => state.books.draftBooks);
 	const [currentItemIndex, setCurrentItemIndex] = useState(0);
 	//const currentItem = draftPlans[currentItemIndex];
 	const FlatListRef = useRef(null);
@@ -65,6 +65,7 @@ function BookCard() {
 			{draftPlans.length > 0 ? (
 				<HomeCard
 					title={"Continue Writting"}
+					subheader="show all"
 					onpress={() => {}}
 					containerStyles={{
 						width: "100%",
@@ -73,7 +74,7 @@ function BookCard() {
 					}}
 				>
 					<ThemeText style={{ marginLeft: 20, fontSize: 12 }}>
-						you have {draftPlans.length} unpublished plans
+						you have {draftPlans.length} unpublished books
 					</ThemeText>
 
 					<FlatList
@@ -84,7 +85,7 @@ function BookCard() {
 						scrollEventThrottle={16}
 						data={draftPlans}
 						keyExtractor={(item) => item.key}
-						snapToAlignment={"center"}
+						snapToAlignment={"start"}
 						renderItem={({ item, index }) => (
 							<View style={styles.main}>
 								<TouchableOpacity
@@ -129,7 +130,7 @@ function BookCard() {
 						<Ionicons name="add-circle" size={100} color={COLORS.white} />
 					</TouchableOpacity>
 					<View style={styles.titleContainer}>
-						<ThemeText>create your first book</ThemeText>
+						<ThemeText>write your first book</ThemeText>
 					</View>
 				</View>
 			)}

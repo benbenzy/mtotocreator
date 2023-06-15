@@ -5,6 +5,7 @@ import {
 	ButtonProps,
 	TouchableOpacity,
 	ViewProps,
+	TextProps,
 	FlatList,
 	FlatListProps,
 } from "react-native";
@@ -15,11 +16,22 @@ import { COLORS, FONTS, SIZES } from "../constants/theme";
 type props = {
 	title: string;
 	onpress: ButtonProps["onPress"];
-	containerStyles: ViewProps["style"];
+	containerStyles?: ViewProps["style"];
 	children: React.ReactNode;
+	subheader: string;
+	subheaderStyles?: TextProps["style"];
+	titleStyles?: TextProps["style"];
 };
 
-const HomeCard = ({ title, onpress, containerStyles, children }: props) => {
+const HomeCard = ({
+	title,
+	onpress,
+	containerStyles,
+	children,
+	subheader,
+	titleStyles,
+	subheaderStyles,
+}: props) => {
 	return (
 		<View style={[containerStyles, styles.container]}>
 			<View
@@ -33,11 +45,17 @@ const HomeCard = ({ title, onpress, containerStyles, children }: props) => {
 					marginVertical: 5,
 				}}
 			>
-				<ThemeText style={[styles.text, { textTransform: "uppercase" }]}>
+				<ThemeText
+					style={[styles.text, titleStyles, { textTransform: "uppercase" }]}
+				>
 					{title}
 				</ThemeText>
 				<TouchableOpacity onPress={onpress}>
-					<Text style={[styles.text, { color: COLORS.primary }]}>show all</Text>
+					<Text
+						style={[styles.text, subheaderStyles, { color: COLORS.primary }]}
+					>
+						{subheader}
+					</Text>
 				</TouchableOpacity>
 			</View>
 			{children}
@@ -52,11 +70,11 @@ const styles = StyleSheet.create({
 		//backgroundColor: COLORS.gray,
 		alignSelf: "center",
 		borderRadius: SIZES.radius,
-		margin: 10,
+		margin: 5,
 	},
 	text: {
 		//color: COLORS.primary,
-		fontSize: 18,
+		fontSize:SIZES.h4,
 		fontWeight: "bold",
 	},
 });

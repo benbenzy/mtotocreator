@@ -5,6 +5,7 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
+	Image,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SIZES } from "../../constants";
@@ -14,11 +15,15 @@ import { useSelector } from "react-redux";
 import { ThemeText } from "../Themed";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import icons from "../../constants/icons";
+import BottomSheet from "../bottomSheet";
+import { Plan } from "../../interface";
 
 function PlanCard() {
 	const router = useRouter();
 	const draftPlans = useSelector((state: any) => state.plans.draftPlans);
-	const [currentItemIndex, setCurrentItemIndex] = useState(0);
+	const [currentItem, setCurrentItem] = useState<Plan>();
+	const [bottonSheeetActive, setBottonSheeetActive] = useState(false);
 	//const currentItem = draftPlans[currentItemIndex];
 	const FlatListRef = useRef(null);
 	const scrollX = useRef(new Animated.Value(0)).current;
@@ -62,9 +67,18 @@ function PlanCard() {
 
 	return (
 		<>
+			{bottonSheeetActive && (
+				<BottomSheet
+					isVisible={bottonSheeetActive}
+					onClose={() => setBottonSheeetActive(false)}
+				>
+					<View><Text>{currentItem?.title }</Text></View>
+				</BottomSheet>
+			)}
 			{draftPlans.length > 0 ? (
 				<HomeCard
 					title={"Continue Planning"}
+					subheader="showall"
 					onpress={() => {}}
 					containerStyles={{
 						width: "100%",
@@ -84,7 +98,7 @@ function PlanCard() {
 						scrollEventThrottle={16}
 						data={draftPlans}
 						keyExtractor={(item) => item.key}
-						snapToAlignment={"center"}
+						snapToAlignment={"start"}
 						//onViewableItemsChanged={onViewableItemsChanged}
 						// viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs}
 						// onScroll={Animated.event(
@@ -94,6 +108,7 @@ function PlanCard() {
 						renderItem={({ item, index }) => (
 							<View style={styles.main}>
 								<TouchableOpacity
+									onLongPress={() =>{setCurrentItem(item),setBottonSheeetActive(true)}}
 									onPress={() => {
 										router.push({
 											pathname: "/addContent",
@@ -110,6 +125,7 @@ function PlanCard() {
 									]}
 								>
 									<View
+								
 										style={styles.avatarContainer}
 									>
 										<Text style={{ fontWeight: "bold", fontSize: 50 }}>
@@ -117,9 +133,7 @@ function PlanCard() {
 										</Text>
 									</View>
 								</TouchableOpacity>
-								<View
-									style={styles.titleContainer}
-								>
+								<View style={styles.titleContainer}>
 									<ThemeText>{item.title}</ThemeText>
 								</View>
 							</View>
@@ -162,8 +176,8 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		paddingRight: SIZES.radius,
 	},
-	titleContainer:{ alignItems: "center", justifyContent: "center" },
-	avatarContainer:{
+	titleContainer: { alignItems: "center", justifyContent: "center" },
+	avatarContainer: {
 		height: 100,
 		width: 100,
 		borderRadius: 50,

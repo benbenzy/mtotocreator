@@ -11,6 +11,7 @@ import { useColorScheme } from "react-native";
 import { PersistGate } from "redux-persist/integration/react";
 import store, { persistedstore } from "../store/store";
 import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -44,9 +45,11 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
 	const colorScheme = useColorScheme();
+	const client = new QueryClient()
 
 	return (
 		<>
+		<QueryClientProvider client={client}>
 			<Provider store={store}>
 				<PersistGate loading={null} persistor={persistedstore}>
 					<ThemeProvider
@@ -54,13 +57,14 @@ function RootLayoutNav() {
 					>
 						<Stack screenOptions={{ }}>
 							<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-							<Stack.Screen name="modal" options={{ presentation: "modal" }} />
+							<Stack.Screen name="modal" options={{ presentation: "containedTransparentModal",headerTitle:"settings" }} />
 							<Stack.Screen name="addContent" options={{}}/>
 							
 						</Stack>
 					</ThemeProvider>
 				</PersistGate>
 			</Provider>
+			</QueryClientProvider>
 		</>
 	);
 }

@@ -5,19 +5,29 @@ import {
 	View,
 	Animated,
 	TouchableWithoutFeedback,
+	TouchableOpacity,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
+import { SIZES } from "../constants";
+import { COLORS, FONTS } from "../constants/theme";
+import { Ionicons } from "@expo/vector-icons";
 
 //import { SIZES, COLORS, FONTS, icons, images } from "../../constants";
 //import { IconButton, TextButton } from "../../Components";
 
-const UploadModal = ({ isVisible, onClose }) => {
+interface params {
+	isVisible: boolean;
+	onClose: () => void;
+	children: React.ReactNode;
+}
+
+const BottonSheet = ({ isVisible, onClose, children }: params) => {
 	const modalAnimatedValue = useRef(new Animated.Value(0)).current;
 
 	const [showUploadModal, setShowUploadModal] = useState(isVisible);
 
 	useEffect(() => {
-		function unsubscribe(params) {
+		function unsubscribe() {
 			if (showUploadModal) {
 				Animated.timing(modalAnimatedValue, {
 					toValue: 1,
@@ -71,29 +81,23 @@ const UploadModal = ({ isVisible, onClose }) => {
 					}}
 				>
 					{/* header */}
-					<View style={{ flexDirection: "row", alignItems: "center" }}>
-						<Text
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							width: "100%",
+							justifyContent: "center",
+						}}
+					>
+						<View
 							style={{
-								flex: 1,
-								...FONTS.h3,
-								fontSize: 16,
-								textTransform: "uppercase",
+								height: SIZES.base / 2,
+								width: 80,
+								backgroundColor: COLORS.black,
+								borderRadius: 5,
+								alignSelf: "center",
 							}}
-						>
-							Upload Book POster
-						</Text>
-						<IconButton
-							containerStyle={{
-								borderRadius: 10,
-								borderWidth: 2,
-								color: COLORS.lightGray2,
-							}}
-							icon={icons.cross}
-							iconStyle={{
-								tintColor: COLORS.gray2,
-							}}
-							onPress={() => setShowUploadModal(false)}
-						/>
+						><TouchableOpacity onPress={()=>setShowUploadModal(false)}></TouchableOpacity></View>
 					</View>
 					{children}
 
@@ -108,28 +112,13 @@ const UploadModal = ({ isVisible, onClose }) => {
 							paddingVertical: SIZES.radius,
 							backgroundColor: COLORS.white,
 						}}
-					>
-						<TextButton
-							disabled={isLoading}
-							isLoading={isLoading}
-							label2={progress}
-							label={ButtonLabel}
-							buttonContainerStyle={{
-								height: 50,
-								borderRadius: SIZES.base,
-								backgroundColor: isLoading
-									? COLORS.transparentPrimray
-									: COLORS.primary,
-							}}
-							onPress={onPress}
-						/>
-					</View>
+					></View>
 				</Animated.View>
 			</View>
 		</Modal>
 	);
 };
 
-export default UploadModal;
+export default BottonSheet;
 
 const styles = StyleSheet.create({});

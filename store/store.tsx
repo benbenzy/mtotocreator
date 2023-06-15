@@ -12,7 +12,9 @@ import {
 } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PlansReducer from "./plans/planSlice";
-import modalReducer from './modalShown/modalSlice'
+import BooksReducer from "./books/bookSlice";
+import modalReducer from "./modalShown/modalSlice";
+import ArticlesReducer from "./articles/artiicleSlice";
 
 const persistConfig = {
 	key: "root",
@@ -20,8 +22,10 @@ const persistConfig = {
 	storage: AsyncStorage,
 };
 const reducer = combineReducers({
+	books: BooksReducer,
 	plans: PlansReducer,
-	modal:modalReducer
+	articles:ArticlesReducer,
+	modal: modalReducer,
 });
 const persisted = persistReducer(persistConfig, reducer);
 

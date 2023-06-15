@@ -1,3 +1,5 @@
 import Colors from "./Colors";
-import theme, { SIZES, FONTS } from "./theme";
-export {theme,Colors,SIZES,FONTS}
+import theme, { SIZES, FONTS, COLORS } from "./theme";
+import constants from "./constants";
+import icons from "./icons";
+export {theme,Colors,SIZES,FONTS,constants,COLORS,icons}

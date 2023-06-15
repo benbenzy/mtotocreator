@@ -7,15 +7,18 @@ import {
 	TouchableOpacityProps,
 	FlatList,
 } from "react-native";
-import { ThemeText, ThemeView } from "../../components/Themed";
+import { ContainerView, ThemeText, ThemeView } from "../../components/Themed";
 import React, { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import CreatePlan from "../../screens/createPlan";
 import CreateBook from "../../screens/createBook";
+import CreateArticle from "../../screens/createArticle";
+import { COLORS } from "../../constants";
 
 const screens = [
 	{ id: 1, name: "plan" },
 	{ id: 2, name: "book" },
+	{ id: 3, name: "article" },
 ];
 interface actiontabs {
 	active: string;
@@ -32,13 +35,14 @@ function SwitchTabs({ active, setactive }: actiontabs) {
 					<ThemeView style={{ alignItems: "center" }}>
 						<TouchableOpacity
 							style={{
+								
 								marginHorizontal: 20,
 							}}
 							onPress={() => setactive(item.name)}
 						>
 							<ThemeText
 								style={{
-									color: "white",
+									
 									textTransform: "uppercase",
 									fontWeight: item.name == active ? "bold" : "normal",
 								}}
@@ -47,8 +51,8 @@ function SwitchTabs({ active, setactive }: actiontabs) {
 							</ThemeText>
 						</TouchableOpacity>
 						{active == item.name && (
-							<ThemeView
-								style={{ height: 3, width: 50, backgroundColor: "white" }}
+							<ContainerView
+								style={{ height: 3, width: 50 }}
 							/>
 						)}
 					</ThemeView>
@@ -67,6 +71,8 @@ export default function CreateScreen() {
 
 			case "book":
 				return <CreateBook />;
+			case "article":
+				return <CreateArticle />;
 
 			default:
 				break;

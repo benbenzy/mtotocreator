@@ -23,6 +23,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarHideOnKeyboard:true
       }}>
       <Tabs.Screen
         name="index"
@@ -53,10 +54,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="analytics"
+        options={{
+          title: 'analytics',
+          tabBarIcon: ({ color }) => <TabBarIcon name="bar-chart" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="content"
         options={{
           title: 'Met',
-          tabBarIcon: ({ color }) => <TabBarIcon name="dashboard" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="connectdevelop" color={color} />,
         }}
       />
     </Tabs>
