@@ -1,9 +1,7 @@
+/** @format */
+
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-	DarkTheme,
-	DefaultTheme,
-	ThemeProvider,
-} from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import React, { useEffect } from "react";
@@ -12,6 +10,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import store, { persistedstore } from "../store/store";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { AuthSessionProvider } from "../context/AuthContext";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -45,25 +44,35 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
 	const colorScheme = useColorScheme();
-	const client = new QueryClient()
+	const client = new QueryClient();
 
 	return (
 		<>
-		<QueryClientProvider client={client}>
-			<Provider store={store}>
-				<PersistGate loading={null} persistor={persistedstore}>
-					<ThemeProvider
-						value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-					>
-						<Stack screenOptions={{ }}>
-							<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-							<Stack.Screen name="modal" options={{ presentation: "containedTransparentModal",headerTitle:"settings" }} />
-							<Stack.Screen name="addContent" options={{}}/>
-							
-						</Stack>
-					</ThemeProvider>
-				</PersistGate>
-			</Provider>
+			<QueryClientProvider client={client}>
+				<Provider store={store}>
+					<AuthSessionProvider>
+						<PersistGate
+							loading={null}
+							persistor={persistedstore}>
+							<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+								<Stack screenOptions={{}}>
+									<Stack.Screen
+										name="(tabs)"
+										options={{ headerShown: false }}
+									/>
+									<Stack.Screen
+										name="notifications"
+										options={{ presentation: "containedTransparentModal", headerTitle: "settings" }}
+									/>
+									<Stack.Screen
+										name="addContent"
+										options={{}}
+									/>
+								</Stack>
+							</ThemeProvider>
+						</PersistGate>
+					</AuthSessionProvider>
+				</Provider>
 			</QueryClientProvider>
 		</>
 	);

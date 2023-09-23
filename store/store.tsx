@@ -1,3 +1,5 @@
+/** @format */
+
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
 	FLUSH,
@@ -24,7 +26,7 @@ const persistConfig = {
 const reducer = combineReducers({
 	books: BooksReducer,
 	plans: PlansReducer,
-	articles:ArticlesReducer,
+	articles: ArticlesReducer,
 	modal: modalReducer,
 });
 const persisted = persistReducer(persistConfig, reducer);

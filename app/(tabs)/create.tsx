@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	Dimensions,
 	StyleSheet,
@@ -35,26 +37,18 @@ function SwitchTabs({ active, setactive }: actiontabs) {
 					<ThemeView style={{ alignItems: "center" }}>
 						<TouchableOpacity
 							style={{
-								
 								marginHorizontal: 20,
 							}}
-							onPress={() => setactive(item.name)}
-						>
+							onPress={() => setactive(item.name)}>
 							<ThemeText
 								style={{
-									
 									textTransform: "uppercase",
 									fontWeight: item.name == active ? "bold" : "normal",
-								}}
-							>
+								}}>
 								{item.name}
 							</ThemeText>
 						</TouchableOpacity>
-						{active == item.name && (
-							<ContainerView
-								style={{ height: 3, width: 50 }}
-							/>
-						)}
+						{active == item.name && <ContainerView style={{ height: 3, width: 50 }} />}
 					</ThemeView>
 				)}
 			/>
@@ -81,7 +75,10 @@ export default function CreateScreen() {
 
 	return (
 		<ThemeView style={styles.container}>
-			<SwitchTabs active={active} setactive={setActive} />
+			<SwitchTabs
+				active={active}
+				setactive={setActive}
+			/>
 			{DisplayEditor()}
 		</ThemeView>
 	);

@@ -1,12 +1,6 @@
-import {
-	Animated,
-	FlatList,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-	Image,
-} from "react-native";
+/** @format */
+
+import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SIZES } from "../../constants";
 import { COLORS } from "../../constants/theme";
@@ -35,8 +29,7 @@ function PlanCard() {
 					alignItems: "center",
 					justifyContent: "center",
 					flexDirection: "row",
-				}}
-			>
+				}}>
 				{draftPlans.map((_item: any, index: number) => {
 					const dotColor = dotsPosition.interpolate({
 						inputRange: [index - 1, index, index + 1],
@@ -70,22 +63,24 @@ function PlanCard() {
 			{bottonSheeetActive && (
 				<BottomSheet
 					isVisible={bottonSheeetActive}
-					onClose={() => setBottonSheeetActive(false)}
-				>
-					<View><Text>{currentItem?.title }</Text></View>
+					onClose={() => setBottonSheeetActive(false)}>
+					<View>
+						<Text>{currentItem?.title}</Text>
+					</View>
 				</BottomSheet>
 			)}
 			{draftPlans.length > 0 ? (
 				<HomeCard
 					title={"Continue Planning"}
 					subheader="showall"
-					onpress={() => {}}
+					onpress={() => {
+						router.push("/draftPlans");
+					}}
 					containerStyles={{
 						width: "100%",
 						//height: SIZES.height / 2,
 						//backgroundColor: COLORS.gray,
-					}}
-				>
+					}}>
 					<ThemeText style={{ marginLeft: 20, fontSize: 12 }}>
 						you have {draftPlans.length} unpublished plans
 					</ThemeText>
@@ -108,7 +103,9 @@ function PlanCard() {
 						renderItem={({ item, index }) => (
 							<View style={styles.main}>
 								<TouchableOpacity
-									onLongPress={() =>{setCurrentItem(item),setBottonSheeetActive(true)}}
+									onLongPress={() => {
+										setCurrentItem(item), setBottonSheeetActive(true);
+									}}
 									onPress={() => {
 										router.push({
 											pathname: "/addContent",
@@ -119,18 +116,11 @@ function PlanCard() {
 										styles.touchableOPacity,
 										{
 											marginLeft: index == 0 ? SIZES.padding : 18,
-											marginRight:
-												index == draftPlans.length - 1 ? SIZES.padding : 0,
+											marginRight: index == draftPlans.length - 1 ? SIZES.padding : 0,
 										},
-									]}
-								>
-									<View
-								
-										style={styles.avatarContainer}
-									>
-										<Text style={{ fontWeight: "bold", fontSize: 50 }}>
-											{item.title.charAt(0)}
-										</Text>
+									]}>
+									<View style={styles.avatarContainer}>
+										<Text style={{ fontWeight: "bold", fontSize: 50 }}>{item.title.charAt(0)}</Text>
 									</View>
 								</TouchableOpacity>
 								<View style={styles.titleContainer}>
@@ -148,9 +138,12 @@ function PlanCard() {
 								pathname: "/create",
 							});
 						}}
-						style={styles.touchableOPacity}
-					>
-						<Ionicons name="add-circle" size={100} color={COLORS.white} />
+						style={styles.touchableOPacity}>
+						<Ionicons
+							name="add-circle"
+							size={100}
+							color={COLORS.white}
+						/>
 					</TouchableOpacity>
 					<View style={styles.titleContainer}>
 						<ThemeText>create your first plan</ThemeText>

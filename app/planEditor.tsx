@@ -1,11 +1,6 @@
-import {
-	Dimensions,
-	StyleSheet,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from "react-native";
+/** @format */
+
+import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useRef, useState } from "react";
 import { useSearchParams } from "expo-router";
 import { useDispatch } from "react-redux";
@@ -30,9 +25,7 @@ const PlanEditor = () => {
 					placeholder="Enter subtopic //introduction"
 				/>
 			</View>
-			<View
-				style={{ height: Dimensions.get("window").height - 200, width: "90%" }}
-			>
+			<View style={{ height: Dimensions.get("window").height - 200, width: "90%" }}>
 				<Text style={styles.text}>message</Text>
 				<TextInput
 					textAlign="left"
@@ -48,7 +41,7 @@ const PlanEditor = () => {
 			</View>
 			<TouchableOpacity
 				onPress={() => {
-					dispatch(addContent({ planId: key, activity: { title, message } }));
+					dispatch(addContent({ planId: key, activity: { title, message, completions: [] } }));
 				}}
 				disabled={!title || !message}
 				style={{
@@ -60,8 +53,7 @@ const PlanEditor = () => {
 					justifyContent: "center",
 					backgroundColor: !title || !message.length ? "lightgray" : "blue",
 					borderRadius: 10,
-				}}
-			>
+				}}>
 				<Text style={styles.text}>Submit</Text>
 			</TouchableOpacity>
 		</View>

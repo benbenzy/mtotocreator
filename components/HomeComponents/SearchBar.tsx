@@ -1,27 +1,27 @@
+/** @format */
+
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemeView } from "../Themed";
+import { SIZES } from "../../constants";
 
 const SearchBar = () => {
 	return (
 		<ThemeView
 			style={{
 				flexDirection: "row",
-				width: "90%",
-				//backgroundColor: ,
 				height: 50,
-				justifyContent: "space-between",
 				alignItems: "center",
 				borderRadius: 10,
-			}}
-		>
+				alignSelf: "center",
+			}}>
 			<TextInput
 				placeholder="Search your books/plans"
 				inlineImageLeft="search"
 				style={{
 					backgroundColor: "lightgray",
-					width: "85%",
+					width: SIZES.width * 0.8,
 					borderRadius: 10,
 					height: 40,
 				}}

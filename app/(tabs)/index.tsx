@@ -1,94 +1,105 @@
+/** @format */
+
 import {
-	Alert,
-	Button,
 	Dimensions,
 	FlatList,
-	ScrollView,
 	StyleSheet,
 	Text,
-	TextInput,
-	TouchableOpacity,
 	View,
+	useColorScheme,
+	TouchableOpacity,
 } from "react-native";
 import * as React from "react";
 
-import EditScreenInfo from "../../components/EditScreenInfo";
-import { ContainerView, ThemeText, ThemeView } from "../../components/Themed";
-//import  selectPlans  from "../../store/plans/planSlice";
-import { useDispatch, useSelector } from "react-redux";
-import {
-	AntDesign,
-	Ionicons,
-	MaterialCommunityIcons,
-	MaterialIcons,
-} from "@expo/vector-icons";
-import { Link, Stack, useNavigation, useRouter } from "expo-router";
-import { clearAll, deletePlan } from "../../store/plans/planSlice";
-import { Plan } from "../../interface";
-import Colors from "../../constants/Colors";
-import HomeCard from "../../components/HomeCard";
-import { SIZES } from "../../constants";
-import { COLORS } from "../../constants/theme";
-import PlanCard from "../../components/HomeComponents/PlanCard";
-import BookCard from "../../components/HomeComponents/BookCard";
-import SearchBar from "../../components/HomeComponents/SearchBar";
-import AnalyticsCard from "../../components/HomeComponents/analyticsCard";
-import ArticlesCard from "../../components/HomeComponents/ArticlesCard";
-import { TOKEN } from "../../lib/api/config";
+import { ThemeText, ThemeView } from "../../components/Themed";
+import { Stack, useRouter } from "expo-router";
+import { COLORS, FONTS, SIZES } from "../../constants/theme";
+import { Colors } from "../../constants";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function HomeScreen() {
-	
-
+	const router = useRouter();
 	const title = () => {
 		return (
-			<ThemeText style={{ fontSize: 20, fontWeight: "bold" }}>
-				Mtoto<Text style={{ color: COLORS.red }}>Sharp</Text>
-			</ThemeText>
+			<View>
+				<ThemeText style={{ fontSize: 20, fontWeight: "bold" }}>
+					Mtoto<Text style={{ color: COLORS.red }}>Sharp</Text>
+				</ThemeText>
+			</View>
 		);
 	};
+	const colorScheme = useColorScheme();
+	const homeData = [
+		{
+			id: 1,
+			name: "content",
+			data: [
+				{ name: "plans", icons: "stopwatch" },
+				{ name: "articles", icons: "stream" },
+				{ name: "books", icons: "book" },
+			],
+		},
+		{
+			id: 2,
+			name: "manage",
+			data: [
+				{ name: "notifications", icons: "bell" },
+				{ name: "messages", icons: "rocketchat" },
+				{ name: "appointments", icons: "deskpro" },
+				{ name: "Group Project ", icons: "plus-circle" },
+			],
+		},
+		{
+			id: 3,
+			name: "acount",
+			data: [
+				{ name: "social", icons: "share-alt" },
+				{ name: "wallet", icons: "wallet" },
+			],
+		},
+	];
 	return (
 		<ThemeView style={styles.container}>
 			<Stack.Screen options={{ headerTitle: title }} />
-			<SearchBar />
-			
-			<ScrollView
-				contentContainerStyle={{
-					alignSelf: "center",
-					//alignItems: "center",
-					//justifyContent: 'center',
-					//width:"100%",
-				}}
-			>
-				<HomeCard
-					title="progress"
-					subheader="This month"
-					subheaderStyles={{ fontSize: 10 }}
-					onpress={undefined}
-					containerStyles={{ width: "95%" }}
-				>
-					<View
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "center",
-						}}
-					>
-						<AnalyticsCard
-							title={"plans"}
-							data={"300"}
-							dataDescription={"enrollment"}
-						/>
-						<AnalyticsCard
-							title={"books"}
-							data={"200"}
-							dataDescription={"purchases"}
+			{/* <SearchBar /> */}
+
+			<FlatList
+				data={homeData}
+				keyExtractor={(item) => `homeData${item.id}`}
+				renderItem={({ item, index }) => (
+					<View style={{ width: SIZES.width * 0.8, marginHorizontal: 20, marginVertical: 10 }}>
+						<ThemeText
+							style={{
+								textDecorationStyle: "solid",
+								textTransform: "capitalize",
+								...FONTS.h2,
+								fontWeight: "normal",
+								color: COLORS.primary,
+							}}>
+							{item.name}
+						</ThemeText>
+
+						<FlatList
+							data={item.data}
+							keyExtractor={(dt, index) => `home_data_content${index}`}
+							renderItem={({ item, index }) => (
+								<TouchableOpacity
+									onPress={() => {}}
+									style={{ flexDirection: "row", margin: SIZES.radius }}>
+									<FontAwesome5
+										name={item.icons}
+										size={24}
+										color={Colors[colorScheme ?? "dark"].text}
+									/>
+									<ThemeText style={{ ...FONTS.h3, paddingLeft: SIZES.padding, fontWeight: "normal" }}>
+										{item.name}
+									</ThemeText>
+								</TouchableOpacity>
+							)}
 						/>
 					</View>
-				</HomeCard>
-				<ArticlesCard />
-				<PlanCard />
-				<BookCard />
-			</ScrollView>
+				)}
+			/>
 		</ThemeView>
 	);
 }
@@ -96,7 +107,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: "center",
+
 		//width:"100%"
 		//backgroundColor: Colors.dark.background,
 	},

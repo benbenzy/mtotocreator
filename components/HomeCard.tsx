@@ -1,3 +1,5 @@
+/** @format */
+
 import {
 	StyleSheet,
 	Text,
@@ -40,22 +42,15 @@ const HomeCard = ({
 					justifyContent: "space-between",
 					alignItems: "center",
 					marginHorizontal: SIZES.radius,
-					width: "90%",
-					alignSelf: "center",
+					width: SIZES.width * 0.8,
+
 					marginVertical: 5,
-				}}
-			>
-				<ThemeText
-					style={[styles.text, titleStyles, { textTransform: "uppercase" }]}
-				>
+				}}>
+				<ThemeText style={[styles.text, titleStyles, { textTransform: "uppercase" }]}>
 					{title}
 				</ThemeText>
 				<TouchableOpacity onPress={onpress}>
-					<Text
-						style={[styles.text, subheaderStyles, { color: COLORS.primary }]}
-					>
-						{subheader}
-					</Text>
+					<Text style={[styles.text, subheaderStyles, { color: COLORS.primary }]}>{subheader}</Text>
 				</TouchableOpacity>
 			</View>
 			{children}
@@ -68,13 +63,12 @@ export default HomeCard;
 const styles = StyleSheet.create({
 	container: {
 		//backgroundColor: COLORS.gray,
-		alignSelf: "center",
-		borderRadius: SIZES.radius,
-		margin: 5,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	text: {
 		//color: COLORS.primary,
-		fontSize:SIZES.h4,
+		fontSize: SIZES.h4,
 		fontWeight: "bold",
 	},
 });

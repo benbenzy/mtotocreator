@@ -1,4 +1,6 @@
-import { Dimensions } from "react-native";
+/** @format */
+
+import { Dimensions, useColorScheme } from "react-native";
 import { useFonts } from "expo-font";
 import { useSelector } from "react-redux";
 const { width, height } = Dimensions.get("window");
@@ -34,7 +36,7 @@ export const COLORS = {
 	purple: "#595683",
 	yellow: "#F1CD7C",
 	lightYellow: "#FFD88A",
-	lightPurple: '#7B789F',
+	lightPurple: "#7B789F",
 	transparent: "transparent",
 	transparentBlack1: "rgba(0, 0, 0, 0.1)",
 	transparentBlack7: "rgba(0, 0, 0, 0.7)",
@@ -135,9 +137,12 @@ export const FONTS = {
 		lineHeight: 22,
 	},
 };
-export const selectedTheme = darkTheme
+export const selectedTheme = darkTheme;
+export const isDarkMode = () => {
+	const colorScheme = useColorScheme();
+	return colorScheme === "dark" ? true : false;
+};
 
-const appTheme = { COLORS, SIZES, FONTS,lightTheme,darkTheme };
+const appTheme = { COLORS, SIZES, FONTS, lightTheme, darkTheme };
 
 export default appTheme;
-
