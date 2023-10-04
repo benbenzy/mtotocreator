@@ -1,9 +1,7 @@
 /** @format */
 
 import {
-	Dimensions,
 	FlatList,
-	ImageBackground,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -12,48 +10,76 @@ import {
 	Image,
 	useColorScheme,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Link, Stack, useLocalSearchParams, useRouter, useSearchParams } from "expo-router";
-import { useSelector } from "react-redux";
-import { Plan } from "../interface";
+import React, { useState } from "react";
+import { Stack, useRouter, useSearchParams } from "expo-router";
 import Colors from "../constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-import { COLORS, SIZES } from "../constants/theme";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { COLORS, FONTS, SIZES } from "../constants/theme";
 import { ThemeText, ThemeView } from "../components/Themed";
 import icons from "../constants/icons";
-import * as plans from "../lib/firebae/plan";
+import { useSelectedItem } from "../context/SelectedItemContext";
+import UploadImage from "../components/uploadImage";
+import { usePlanActions } from "../lib/firebae/planActions";
+import { useSelector } from "react-redux";
+import { onSnapshot, doc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { Plan } from "../interface";
 
 const addContent = () => {
 	const params = useSearchParams();
+	const { id, draft } = params;
+	console.log("id", id, draft);
 	const router = useRouter();
-	const { itemKey } = params;
+	//const { selectedItem } = useSelectedItem();
+	const { selectImage } = usePlanActions();
+
+	const [image, setImage] = React.useState("");
+	const [uploadImage, setUploadImage] = React.useState(false);
 	const isDarkMode = useColorScheme() === "dark";
-	//const itemKey = 1;
-	//const [first, setfirst] = useState<Plan>();
-	const [selectedItem, setSelectedItem] = useState();
-	const item = useSelector((state: any) => state.plans.draftPlans);
-	const currentItem = item.filter((plan: any) => plan.key == itemKey);
-	console.log("current item", currentItem);
+	const colorScheme = useColorScheme();
+	const [selectedItem, setSelectedItem] = useState<Plan | undefined | any>(undefined);
+
+	const [title, setTitle] = React.useState(selectedItem?.title);
+	const [titleEditable, setTitleEditable] = React.useState(false);
+	const [desctiption, setDesctiption] = React.useState(selectedItem?.description);
+	const [desctiptionEditable, setDesctiptionEditable] = React.useState(false);
+
+	const draftPlans = useSelector((state: any) => state.plans.draftPlans);
+	//console.log("draftplans", draftPlans);
+
+	React.useEffect(() => {
+		const unsub = () => {
+			if (draft) {
+				const select = draftPlans.find((item: Plan) => item.key === id);
+				console.log("selected ite", select);
+				setSelectedItem(select);
+				console.log("selected item", selectedItem);
+			} else {
+				onSnapshot(doc(db, "plans", `${id}`), (snapshot) => {
+					if (snapshot.exists()) {
+						setSelectedItem(snapshot.data());
+					}
+				});
+			}
+		};
+		return unsub();
+	}, [id, draftPlans]);
 
 	return (
-		<View style={styles.main}>
-			<Stack.Screen
+		<ThemeView style={styles.main}>
+			{/* <Stack.Screen
 				options={{
-					title: `${currentItem[0]?.title}`,
-					headerTitle: `${currentItem[0]?.title}`,
+					title: `${selectedItem?.title}`,
+					headerTitle: `${selectedItem?.title}`,
 					headerTitleStyle: { color: isDarkMode ? "white" : "black", fontSize: 20 },
 					headerRight: () => (
 						<TouchableOpacity
-							onPress={() => {
-								plans.createPlan(currentItem).catch((error) => {
-									console.log("creating error", error);
-								});
-							}}
-							disabled={currentItem[0]?.content.lenth < 1}
+							onPress={() => {}}
+							disabled={selectedItem?.content?.length < 1}
 							style={{
 								marginRight: 20,
 								backgroundColor:
-									currentItem[0]?.content.length! < 1 ? COLORS.transparentPrimray : COLORS.pink,
+									selectedItem?.content.length! < 1 ? COLORS.transparentPrimray : COLORS.pink,
 								height: 30,
 								alignItems: "center",
 								justifyContent: "center",
@@ -63,65 +89,63 @@ const addContent = () => {
 						</TouchableOpacity>
 					),
 				}}
-			/>
-			<View
-				style={{
-					backgroundColor: COLORS.purple,
-					height: 130,
-					width: SIZES.width * 0.8,
-					maxWidth: 400,
-					alignSelf: "center",
-					borderRadius: SIZES.radius,
-					alignItems: "center",
-					justifyContent: "center",
+			/> */}
+			<TouchableOpacity
+				style={{ alignSelf: "center", alignItems: "center" }}
+				onPress={() => {
+					setUploadImage(true);
 				}}>
-				{currentItem?.image == "" ? (
-					<View
-						style={{
-							backgroundColor: COLORS.white2,
-							width: 100,
-							height: 100,
-							borderRadius: 100,
-							alignItems: "center",
-							justifyContent: "center",
-						}}>
-						<Text
-							style={{
-								color: "black",
-								alignSelf: "center",
-								fontSize: 40,
-								fontWeight: "bold",
-							}}>
-							{currentItem[0]?.title.charAt(0)}
-						</Text>
-					</View>
+				<ThemeText>select thumbnail</ThemeText>
+				{selectedItem?.thumbnail != "" ? (
+					<Image
+						resizeMode="contain"
+						style={{ height: 150, width: SIZES.width * 0.8, maxWidth: 400 }}
+						source={{ uri: selectedItem?.thumbnail }}
+					/>
 				) : (
-					<View
-						style={{
-							backgroundColor: COLORS.white2,
-							width: 100,
-							height: 100,
-							borderRadius: 100,
-							alignItems: "center",
-							justifyContent: "center",
-						}}>
-						<Image
-							source={icons.My_Books}
-							resizeMode="contain"
-							style={{ width: 100, height: 100, borderRadius: 100 }}
+					<FontAwesome
+						name="image"
+						size={150}
+						color={Colors[colorScheme ?? "dark"].text}
+					/>
+				)}
+			</TouchableOpacity>
+
+			<View style={{ maxWidth: 500, alignSelf: "center", width: SIZES.width * 0.8 }}>
+				<View style={{}}>
+					<View>
+						<ThemeText style={{ ...FONTS.h3, fontWeight: "bold" }}>title</ThemeText>
+
+						{!titleEditable && (
+							<TouchableOpacity onPress={() => setTitleEditable(true)}>
+								<ThemeText style={{ ...FONTS.h3, fontWeight: "bold" }}>{title}</ThemeText>
+							</TouchableOpacity>
+						)}
+						{titleEditable && (
+							<TextInput
+								editable={titleEditable}
+								placeholderTextColor={"black"}
+								onChangeText={(text) => {
+									setTitle(text);
+								}}
+								value={title}
+								style={{ backgroundColor: Colors[colorScheme ?? "dark"].tabIconDefault, height: 60 }}
+							/>
+						)}
+					</View>
+					<View>
+						<ThemeText style={{ ...FONTS.body5, fontWeight: "normal" }}>description</ThemeText>
+						<TextInput
+							editable={desctiptionEditable}
+							multiline
+							onChangeText={(text) => {
+								setDesctiption(text);
+							}}
+							value={desctiption}
+							style={{ backgroundColor: Colors[colorScheme ?? "dark"].tabIconDefault }}
 						/>
 					</View>
-				)}
-			</View>
 
-			<View style={{ maxWidth: 400, alignSelf: "center", width: SIZES.width * 0.8 }}>
-				<View
-					style={{
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "space-between",
-					}}>
-					<Text style={[styles.text, { textDecorationLine: "underline" }]}>Desctiption</Text>
 					<TouchableOpacity style={{ flexDirection: "row" }}>
 						<Image
 							source={icons.filter}
@@ -133,23 +157,24 @@ const addContent = () => {
 				<Text
 					numberOfLines={4}
 					style={[styles.text, { fontSize: 13 }]}>
-					{currentItem[0]?.description}
+					{selectedItem?.description}
 				</Text>
 			</View>
 
-			{currentItem[0]?.content.length > 0 ? (
+			{selectedItem?.content?.length > 0 ? (
 				<FlatList
-					data={currentItem[0]?.content}
+					data={selectedItem?.content}
 					renderItem={({ item, index }) => (
 						<TouchableOpacity
 							style={{
 								backgroundColor: "lightgray",
-								marginTop: SIZES.base,
+								marginTop: index == 0 ? SIZES.padding : SIZES.base,
 								flex: 1,
 								alignItems: "center",
 								alignSelf: "center",
 								//justifyContent: "space-between",
-								width: "90%",
+								width: SIZES.width * 0.8,
+								maxWidth: 500,
 								borderRadius: 10,
 								flexDirection: "row",
 								height: 50,
@@ -193,7 +218,7 @@ const addContent = () => {
 					onPress={() => {
 						router.push({
 							pathname: "/planEditor",
-							params: { key: currentItem[0].key },
+							params: { id: selectedItem?.id },
 						});
 					}}
 					style={{
@@ -215,7 +240,17 @@ const addContent = () => {
 					<Text style={[styles.text, { textTransform: "uppercase" }]}>add content</Text>
 				</TouchableOpacity>
 			</ThemeView>
-		</View>
+			{uploadImage && (
+				<UploadImage
+					isVisible={uploadImage}
+					onClose={() => setUploadImage(false)}
+					image={image}
+					setImageLink={undefined}
+					setUploadImage={undefined}
+					planId={selectedItem.id}
+				/>
+			)}
+		</ThemeView>
 	);
 };
 

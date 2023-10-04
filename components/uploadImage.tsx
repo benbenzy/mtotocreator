@@ -14,22 +14,32 @@ import {
 
 import React, { useState, useEffect, useRef } from "react";
 import { SIZES, constants, COLORS, FONTS, icons } from "../constants";
-import { uploadimage } from "../lib/firebae/plan";
+
+import { ThemeText } from "./Themed";
+import * as ImagePicker from "expo-image-picker";
+import { FontAwesome } from "@expo/vector-icons";
+import { usePlanActions } from "../lib/firebae/planActions";
 
 interface props {
 	isVisible: boolean;
+
 	onClose: () => void;
 	image: string;
 	setImageLink: any;
 	setUploadImage: any;
+	planId: string;
 }
 
-const UploadImage = ({ isVisible, onClose, image, setImageLink, setUploadImage }: props) => {
+const UploadImage = ({ isVisible, onClose, setImageLink, setUploadImage, planId }: props) => {
+	const { uploadImage, selectImage } = usePlanActions();
+	const [image, setImage] = React.useState("");
+
 	const modalAnimatedValue = useRef(new Animated.Value(0)).current;
 
 	const [showFilterModal, setShowFilterModal] = useState(isVisible);
 	const [progress, setProgress] = useState("");
 	const [error, setError] = useState("");
+
 	useEffect(() => {
 		if (showFilterModal) {
 			Animated.timing(modalAnimatedValue, {
@@ -83,11 +93,29 @@ const UploadImage = ({ isVisible, onClose, image, setImageLink, setUploadImage }
 						borderTopLeftRadius: SIZES.padding,
 						backgroundColor: COLORS.white,
 					}}>
-					<Image
-						source={{ uri: image }}
-						resizeMode="contain"
-						style={{ height: 250, width: SIZES.width * 0.8 }}
-					/>
+					{image != "" ? (
+						<Image
+							source={{ uri: image }}
+							resizeMode="contain"
+							style={{ height: 250, width: SIZES.width * 0.8 }}
+						/>
+					) : (
+						<View style={{ alignItems: "center", alignSelf: "center" }}>
+							<ThemeText style={{ ...FONTS.h3, fontWeight: "normal" }}>upload thumbnail</ThemeText>
+							<TouchableOpacity
+								onPress={() => {
+									selectImage().then((res) => {
+										console.log(res);
+										setImage(res);
+									});
+								}}>
+								<FontAwesome
+									name="image"
+									size={150}
+								/>
+							</TouchableOpacity>
+						</View>
+					)}
 
 					<View
 						style={{
@@ -102,17 +130,28 @@ const UploadImage = ({ isVisible, onClose, image, setImageLink, setUploadImage }
 							alignItems: "center",
 						}}>
 						<Text style={{ color: COLORS.red }}>{error}</Text>
-						<TouchableOpacity
-							onPress={() => uploadimage(image, setImageLink, setProgress, setError, setUploadImage)}
-							style={{
-								alignItems: "center",
-								justifyContent: "center",
-								height: 50,
-								width: SIZES.width * 0.8,
-								backgroundColor: COLORS.primary,
-							}}>
-							<Text>Upload Image</Text>
-						</TouchableOpacity>
+						{image != "" && (
+							<TouchableOpacity
+								onPress={() => {
+									try {
+										uploadImage(image, planId).then((res) => {
+											console.log(res);
+										});
+									} catch (error) {
+										console.log(error);
+									}
+								}}
+								style={{
+									alignSelf: "center",
+									alignItems: "center",
+									justifyContent: "center",
+									height: 50,
+									width: SIZES.width * 0.8,
+									backgroundColor: COLORS.primary,
+								}}>
+								<Text>Upload Image</Text>
+							</TouchableOpacity>
+						)}
 						<Text>{progress}</Text>
 					</View>
 				</Animated.View>

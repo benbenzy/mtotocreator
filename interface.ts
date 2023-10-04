@@ -1,6 +1,10 @@
 /** @format */
 
 export interface Plan {
+	id: string;
+	key: any;
+	thumbnail: string;
+	author: Author;
 	title: string;
 	description: string;
 	image: string;
@@ -8,6 +12,11 @@ export interface Plan {
 	tags?: string[];
 	category: string;
 	content: ContentItem[];
+}
+export interface Author {
+	name: string;
+	id: string;
+	email: string;
 }
 
 export interface ContentItem {

@@ -11,6 +11,8 @@ import store, { persistedstore } from "../store/store";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthSessionProvider } from "../context/AuthContext";
+import PlansProvider from "../lib/firebae/planActions";
+import SelectedItemProvider from "../context/SelectedItemContext";
 
 export {
 	// Catch any errors thrown by the Layout component.
@@ -55,20 +57,28 @@ function RootLayoutNav() {
 							loading={null}
 							persistor={persistedstore}>
 							<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-								<Stack screenOptions={{}}>
-									<Stack.Screen
-										name="(tabs)"
-										options={{ headerShown: false }}
-									/>
-									<Stack.Screen
-										name="notifications"
-										options={{ presentation: "containedTransparentModal", headerTitle: "settings" }}
-									/>
-									<Stack.Screen
-										name="addContent"
-										options={{}}
-									/>
-								</Stack>
+								<PlansProvider>
+									<SelectedItemProvider>
+										<Stack screenOptions={{}}>
+											<Stack.Screen
+												name="(tabs)"
+												options={{ headerShown: false }}
+											/>
+											<Stack.Screen
+												name="notifications"
+												options={{ presentation: "containedTransparentModal", headerTitle: "settings" }}
+											/>
+											<Stack.Screen
+												name="addContent"
+												options={{}}
+											/>
+											<Stack.Screen
+												name="plans"
+												options={{}}
+											/>
+										</Stack>
+									</SelectedItemProvider>
+								</PlansProvider>
 							</ThemeProvider>
 						</PersistGate>
 					</AuthSessionProvider>

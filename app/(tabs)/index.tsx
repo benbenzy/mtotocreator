@@ -32,26 +32,36 @@ export default function HomeScreen() {
 	const homeData = [
 		{
 			id: 1,
-			name: "content",
+			name: "create",
 			data: [
-				{ name: "plans", icons: "stopwatch" },
-				{ name: "articles", icons: "stream" },
-				{ name: "books", icons: "book" },
+				{ name: "newPlan", icons: "rocketchat" },
+				{ name: "newBook", icons: "deskpro" },
+				{ name: "newArticle ", icons: "plus-circle" },
+				{ name: "groupProjects ", icons: "plus-circle" },
 			],
 		},
 		{
 			id: 2,
-			name: "manage",
+			name: "content",
 			data: [
-				{ name: "notifications", icons: "bell" },
-				{ name: "messages", icons: "rocketchat" },
-				{ name: "appointments", icons: "deskpro" },
-				{ name: "Group Project ", icons: "plus-circle" },
+				{ name: "plans", icons: "laptop-house" },
+				{ name: "articles", icons: "stream" },
+				{ name: "books", icons: "book" },
 			],
 		},
+
 		{
 			id: 3,
-			name: "acount",
+			name: "connect",
+			data: [
+				{ name: "comments", icons: "rocketchat" },
+				{ name: "appointments", icons: "deskpro" },
+			],
+		},
+
+		{
+			id: 4,
+			name: "manage",
 			data: [
 				{ name: "social", icons: "share-alt" },
 				{ name: "wallet", icons: "wallet" },
@@ -72,7 +82,7 @@ export default function HomeScreen() {
 							style={{
 								textDecorationStyle: "solid",
 								textTransform: "capitalize",
-								...FONTS.h2,
+								...FONTS.h3,
 								fontWeight: "normal",
 								color: COLORS.primary,
 							}}>
@@ -84,11 +94,13 @@ export default function HomeScreen() {
 							keyExtractor={(dt, index) => `home_data_content${index}`}
 							renderItem={({ item, index }) => (
 								<TouchableOpacity
-									onPress={() => {}}
-									style={{ flexDirection: "row", margin: SIZES.radius }}>
+									onPress={() => {
+										router.push(`${item.name}`);
+									}}
+									style={{ flexDirection: "row", paddingVertical: SIZES.base }}>
 									<FontAwesome5
 										name={item.icons}
-										size={24}
+										size={18}
 										color={Colors[colorScheme ?? "dark"].text}
 									/>
 									<ThemeText style={{ ...FONTS.h3, paddingLeft: SIZES.padding, fontWeight: "normal" }}>
