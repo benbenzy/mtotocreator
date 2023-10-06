@@ -30,9 +30,16 @@ interface props {
 	planId: string;
 }
 
-const UploadImage = ({ isVisible, onClose, setImageLink, setUploadImage, planId }: props) => {
+const UploadImage = ({
+	isVisible,
+	onClose,
+	setImageLink,
+	image,
+	setUploadImage,
+	planId,
+}: props) => {
 	const { uploadImage, selectImage } = usePlanActions();
-	const [image, setImage] = React.useState("");
+	//const [image, setImage] = React.useState("");
 
 	const modalAnimatedValue = useRef(new Animated.Value(0)).current;
 
@@ -106,7 +113,7 @@ const UploadImage = ({ isVisible, onClose, setImageLink, setUploadImage, planId 
 								onPress={() => {
 									selectImage().then((res) => {
 										console.log(res);
-										setImage(res);
+										//setImage(res);
 									});
 								}}>
 								<FontAwesome

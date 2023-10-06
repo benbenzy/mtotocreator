@@ -2,28 +2,21 @@
 
 import {
 	Dimensions,
-	KeyboardAvoidingView,
 	ScrollView,
 	StyleSheet,
-	Text,
-	TextInput,
-	TextInputProps,
 	TouchableOpacity,
 	View,
-	Image,
 	Alert,
 	useColorScheme,
 	ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
-import { Picker } from "@react-native-picker/picker";
 import { useDispatch, useSelector } from "react-redux";
 import { addPlan } from "../store/plans/planSlice";
 import { Plan } from "../interface";
 import { ThemeText, ThemeView } from "../components/Themed";
-import { COLORS, Colors, FONTS, SIZES, icons } from "../constants";
+import { COLORS, Colors, FONTS } from "../constants";
 
-import UploadImage from "../components/uploadImage";
 import InputComponent from "../components/InputComponent";
 import { FontAwesome } from "@expo/vector-icons";
 import { usePlanActions } from "../lib/firebae/planActions";
@@ -61,6 +54,8 @@ export default function CreatePlan() {
 		price,
 		category,
 		content,
+		id: plans.length + 1,
+		thumbnail: "",
 	};
 	const router = useRouter();
 	function submitPlan() {
@@ -159,7 +154,11 @@ export default function CreatePlan() {
 				disabled={disabled}
 				onPress={
 					() => {
-						dispatch(addPlan(plan));
+						const res = dispatch(addPlan(plan));
+						//console.log(res.payload);
+						if (res) {
+							router.push({ pathname: "/addContent", params: { id: res.payload.id, draft: true } });
+						}
 					}
 					//submitPlan
 				}
@@ -173,7 +172,7 @@ export default function CreatePlan() {
 const styles = StyleSheet.create({
 	main: {
 		flex: 1,
-		alignItems: "center",
+		//alignItems: "center",
 		//justifyContent: "center",
 	},
 	title: {

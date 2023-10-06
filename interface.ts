@@ -1,10 +1,10 @@
 /** @format */
 
 export interface Plan {
-	id: string;
-	key: any;
+	id: string | number;
+
 	thumbnail: string;
-	author: Author;
+	author?: Author;
 	title: string;
 	description: string;
 	image: string;

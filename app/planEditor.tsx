@@ -2,14 +2,16 @@
 
 import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useRef, useState } from "react";
-import { useSearchParams } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import { useDispatch } from "react-redux";
 import { addContent } from "../store/plans/planSlice";
 
 const PlanEditor = () => {
 	const dispatch = useDispatch();
+	const router = useRouter();
 	const params = useSearchParams();
-	const { key } = params;
+	const { id } = params;
+	//console.log("key key", key);
 	const [title, setTitle] = useState("");
 	const [message, setMessage] = useState("");
 
@@ -41,7 +43,12 @@ const PlanEditor = () => {
 			</View>
 			<TouchableOpacity
 				onPress={() => {
-					dispatch(addContent({ planId: key, activity: { title, message, completions: [] } }));
+					const res = dispatch(
+						addContent({ planId: id, activity: { title, message, completions: [] } })
+					);
+					if (res) {
+						router.back();
+					}
 				}}
 				disabled={!title || !message}
 				style={{

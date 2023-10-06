@@ -36,6 +36,10 @@ export default InputComponent;
 const styles = StyleSheet.create({
 	container: {
 		marginVertical: SIZES.base,
+		width: "100%",
+		alignSelf: "center",
+		flex: 1,
+		//maxWidth: 500,
 	},
 	title: {
 		fontSize: 15,
@@ -44,10 +48,10 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		borderWidth: 1,
-
+		//flex: 1,
 		borderColor: "black",
 		backgroundColor: "#fff",
-		width: SIZES.width - 20,
+		width: "90%",
 		height: 60,
 		borderRadius: 10,
 	},

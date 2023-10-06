@@ -10,7 +10,7 @@ import {
 	Image,
 	useColorScheme,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Stack, useRouter, useSearchParams } from "expo-router";
 import Colors from "../constants/Colors";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
@@ -20,10 +20,11 @@ import icons from "../constants/icons";
 import { useSelectedItem } from "../context/SelectedItemContext";
 import UploadImage from "../components/uploadImage";
 import { usePlanActions } from "../lib/firebae/planActions";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { onSnapshot, doc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Plan } from "../interface";
+import { deleteContent, deletePlan, updatePlan } from "../store/plans/planSlice";
 
 const addContent = () => {
 	const params = useSearchParams();
@@ -31,69 +32,113 @@ const addContent = () => {
 	console.log("id", id, draft);
 	const router = useRouter();
 	//const { selectedItem } = useSelectedItem();
-	const { selectImage } = usePlanActions();
+	const { selectImage, createPlan, uploadImage } = usePlanActions();
+	const dispatch = useDispatch();
 
 	const [image, setImage] = React.useState("");
-	const [uploadImage, setUploadImage] = React.useState(false);
+	//const [uploadImage, setUploadImage] = React.useState(false);
 	const isDarkMode = useColorScheme() === "dark";
 	const colorScheme = useColorScheme();
-	const [selectedItem, setSelectedItem] = useState<Plan | undefined | any>(undefined);
 
-	const [title, setTitle] = React.useState(selectedItem?.title);
-	const [titleEditable, setTitleEditable] = React.useState(false);
-	const [desctiption, setDesctiption] = React.useState(selectedItem?.description);
-	const [desctiptionEditable, setDesctiptionEditable] = React.useState(false);
+	const [selectedItem, setSelectedItem] = useState<Plan | undefined | any>({});
+	const [editable, setEditable] = useState(false);
+	const [footerHeight, setFooterHeight] = useState(60);
 
-	const draftPlans = useSelector((state: any) => state.plans.draftPlans);
-	//console.log("draftplans", draftPlans);
+	const draftPlans = useSelector((state: any) => state.plans?.draftPlans);
+
+	const handleTitleChange = (text: string) => {
+		setSelectedItem({ ...selectedItem, title: text });
+	};
+
+	const handleDescriptionChange = (text: string) => {
+		setSelectedItem({ ...selectedItem, description: text });
+	};
+	const unsub = useCallback(() => {
+		if (draft && id) {
+			const epr = draftPlans.find((item: Plan) => item.id === id);
+			setSelectedItem(epr);
+			console.log(selectedItem);
+		} else {
+			onSnapshot(doc(db, "plans", `${id}`), (snapshot) => {
+				if (snapshot.exists()) {
+					setSelectedItem(snapshot.data());
+				}
+			});
+		}
+	}, [id, draftPlans]);
 
 	React.useEffect(() => {
-		const unsub = () => {
-			if (draft) {
-				const select = draftPlans.find((item: Plan) => item.key === id);
-				console.log("selected ite", select);
-				setSelectedItem(select);
-				console.log("selected item", selectedItem);
-			} else {
-				onSnapshot(doc(db, "plans", `${id}`), (snapshot) => {
-					if (snapshot.exists()) {
-						setSelectedItem(snapshot.data());
-					}
-				});
-			}
-		};
-		return unsub();
-	}, [id, draftPlans]);
+		unsub();
+	}, [id,draftPlans]);
 
 	return (
 		<ThemeView style={styles.main}>
-			{/* <Stack.Screen
+			<Stack.Screen
 				options={{
 					title: `${selectedItem?.title}`,
 					headerTitle: `${selectedItem?.title}`,
 					headerTitleStyle: { color: isDarkMode ? "white" : "black", fontSize: 20 },
 					headerRight: () => (
-						<TouchableOpacity
-							onPress={() => {}}
-							disabled={selectedItem?.content?.length < 1}
-							style={{
-								marginRight: 20,
-								backgroundColor:
-									selectedItem?.content.length! < 1 ? COLORS.transparentPrimray : COLORS.pink,
-								height: 30,
-								alignItems: "center",
-								justifyContent: "center",
-								borderRadius: 10,
-							}}>
-							<ThemeText style={{ textTransform: "uppercase" }}>publish</ThemeText>
-						</TouchableOpacity>
+						<View>
+							{editable ? (
+								<TouchableOpacity
+									onPress={() => {
+										dispatch(updatePlan(selectedItem));
+									}}
+									style={{
+										marginRight: 20,
+										backgroundColor: COLORS.blue,
+										height: 30,
+										width: 100,
+										alignItems: "center",
+										justifyContent: "center",
+										borderRadius: 10,
+									}}>
+									<ThemeText style={{ textTransform: "uppercase" }}>save</ThemeText>
+								</TouchableOpacity>
+							) : (
+								<TouchableOpacity
+									onPress={() => {
+										createPlan(selectedItem)
+											.then((res: any) => {
+												if (res) {
+													uploadImage({ image, planId: res });
+												}
+											})
+											.catch((error: any) => {
+												console.log("error posting", error);
+											});
+									}}
+									disabled={selectedItem?.content?.length < 1}
+									style={{
+										marginRight: 20,
+										backgroundColor:
+											selectedItem?.content?.length < 1 ? COLORS.transparentPrimray : COLORS.pink,
+										height: 30,
+										alignItems: "center",
+										justifyContent: "center",
+										borderRadius: 10,
+									}}>
+									<ThemeText style={{ textTransform: "uppercase" }}>publish</ThemeText>
+								</TouchableOpacity>
+							)}
+						</View>
 					),
 				}}
-			/> */}
+			/>
 			<TouchableOpacity
 				style={{ alignSelf: "center", alignItems: "center" }}
 				onPress={() => {
-					setUploadImage(true);
+					selectImage()
+						.then((res: any) => {
+							setSelectedItem({ ...selectedItem, thumbnail: res });
+						})
+						.then(() => {
+							dispatch(updatePlan(selectedItem));
+						})
+						.catch((error: any) => {
+							alert(error);
+						});
 				}}>
 				<ThemeText>select thumbnail</ThemeText>
 				{selectedItem?.thumbnail != "" ? (
@@ -113,92 +158,125 @@ const addContent = () => {
 
 			<View style={{ maxWidth: 500, alignSelf: "center", width: SIZES.width * 0.8 }}>
 				<View style={{}}>
-					<View>
+					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
 						<ThemeText style={{ ...FONTS.h3, fontWeight: "bold" }}>title</ThemeText>
-
-						{!titleEditable && (
-							<TouchableOpacity onPress={() => setTitleEditable(true)}>
-								<ThemeText style={{ ...FONTS.h3, fontWeight: "bold" }}>{title}</ThemeText>
-							</TouchableOpacity>
-						)}
-						{titleEditable && (
-							<TextInput
-								editable={titleEditable}
-								placeholderTextColor={"black"}
-								onChangeText={(text) => {
-									setTitle(text);
-								}}
-								value={title}
-								style={{ backgroundColor: Colors[colorScheme ?? "dark"].tabIconDefault, height: 60 }}
+						<TouchableOpacity
+							onPress={() => setEditable(!editable)}
+							style={{ flexDirection: "row" }}>
+							<Image
+								source={icons.filter}
+								style={{ height: 20, width: 20, tintColor: COLORS.primary1 }}
 							/>
-						)}
+							<ThemeText>{!editable ? " Edit" : "cancel"}</ThemeText>
+						</TouchableOpacity>
 					</View>
+
+					<TextInput
+						editable={editable}
+						//placeholderTextColor={"black"}
+						onChangeText={(text) => {
+							handleTitleChange(text);
+						}}
+						autoFocus
+						value={selectedItem?.title}
+						style={{
+							flex: 1,
+							borderWidth: 1,
+							borderColor: Colors[colorScheme ?? "dark"].tabIconDefault,
+							height: 50,
+						}}
+					/>
+
 					<View>
 						<ThemeText style={{ ...FONTS.body5, fontWeight: "normal" }}>description</ThemeText>
 						<TextInput
-							editable={desctiptionEditable}
+							editable={editable}
 							multiline
+							autoFocus
 							onChangeText={(text) => {
-								setDesctiption(text);
+								handleDescriptionChange(text);
 							}}
-							value={desctiption}
-							style={{ backgroundColor: Colors[colorScheme ?? "dark"].tabIconDefault }}
+							value={selectedItem?.description}
+							onContentSizeChange={(e) => {
+								const height = e.nativeEvent.contentSize.height;
+								if (height <= 60) {
+									setFooterHeight(60);
+								} else if (height > 60 && height <= 100) {
+									setFooterHeight(height);
+								} else if (height > 100) {
+									setFooterHeight(100);
+								}
+							}}
+							style={{
+								borderWidth: 1,
+								borderColor: Colors[colorScheme ?? "dark"].tabIconDefault,
+								flex: 1,
+								height: footerHeight,
+							}}
 						/>
 					</View>
-
-					<TouchableOpacity style={{ flexDirection: "row" }}>
-						<Image
-							source={icons.filter}
-							style={{ height: 20, width: 20, tintColor: COLORS.primary1 }}
-						/>
-						<ThemeText>Edit</ThemeText>
-					</TouchableOpacity>
 				</View>
-				<Text
-					numberOfLines={4}
-					style={[styles.text, { fontSize: 13 }]}>
-					{selectedItem?.description}
-				</Text>
 			</View>
 
 			{selectedItem?.content?.length > 0 ? (
 				<FlatList
 					data={selectedItem?.content}
 					renderItem={({ item, index }) => (
-						<TouchableOpacity
+						<View
 							style={{
-								backgroundColor: "lightgray",
-								marginTop: index == 0 ? SIZES.padding : SIZES.base,
-								flex: 1,
-								alignItems: "center",
-								alignSelf: "center",
-								//justifyContent: "space-between",
-								width: SIZES.width * 0.8,
-								maxWidth: 500,
-								borderRadius: 10,
 								flexDirection: "row",
-								height: 50,
+								flex: 1,
+								width: "100%",
 							}}>
-							<Ionicons
-								name="ios-radio-button-on-outline"
-								size={28}
-								style={{ marginLeft: 10 }}
-								color={COLORS.primary}
-							/>
+							<TouchableOpacity
+								style={{
+									backgroundColor: "lightgray",
+									marginTop: index == 0 ? SIZES.padding : SIZES.base,
+									flex: 1,
+									alignItems: "center",
+									//alignSelf: "center",
+									//justifyContent: "space-between",
+									//width: "80%",
+									maxWidth: 500,
+									borderRadius: 10,
+									flexDirection: "row",
+									height: 50,
+								}}>
+								<Ionicons
+									name="ios-radio-button-on-outline"
+									size={28}
+									style={{ marginLeft: 10 }}
+									color={COLORS.primary}
+								/>
 
-							<Text
-								numberOfLines={1}
-								style={[styles.text, { marginLeft: 20 }]}>
-								{item.title}
-							</Text>
+								<Text
+									numberOfLines={1}
+									style={[styles.text, { marginLeft: 20 }]}>
+									{item.title}
+								</Text>
 
-							<Ionicons
-								name="play-circle"
-								size={28}
-								color={COLORS.primary}
-								style={{ position: "absolute", right: 10 }}
-							/>
-						</TouchableOpacity>
+								<Ionicons
+									name="play-circle"
+									size={28}
+									color={COLORS.primary}
+									style={{ position: "absolute", right: 10 }}
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity
+								onPress={() => dispatch(deleteContent({ id: selectedItem.id, item }))}
+								style={{
+									alignItems: "center",
+									justifyContent: "center",
+									position: "relative",
+									right: -10,
+								}}>
+								<FontAwesome
+									name="trash"
+									size={24}
+									color={COLORS.primary}
+								/>
+							</TouchableOpacity>
+						</View>
 					)}
 				/>
 			) : (
@@ -243,7 +321,7 @@ const addContent = () => {
 			{uploadImage && (
 				<UploadImage
 					isVisible={uploadImage}
-					onClose={() => setUploadImage(false)}
+					onClose={() => {}}
 					image={image}
 					setImageLink={undefined}
 					setUploadImage={undefined}

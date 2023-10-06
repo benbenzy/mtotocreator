@@ -19,7 +19,7 @@ export const PlanContext = React.createContext<planActionsProps | any>({});
 
 const PlansProvider = ({ children }: PropsWithChildren) => {
 	const { user } = useAuthSession();
-	const { selectedPlan, itemId } = useSelectedItem();
+	//const { selectedPlan, planId } = useSelectedItem();
 	async function createPlan(plan: any) {
 		try {
 			//const plan = dta;
@@ -56,8 +56,8 @@ const PlansProvider = ({ children }: PropsWithChildren) => {
 		setError: any,
 		planId: string
 	) => {
-		if (itemId) {
-			const apkimagesref = ref(storage, "images/" + itemId);
+		if (planId) {
+			const apkimagesref = ref(storage, "images/" + planId);
 			const apkimage = await fetch(image);
 			const blob = await apkimage.blob();
 			const metadata = {
@@ -103,7 +103,7 @@ const PlansProvider = ({ children }: PropsWithChildren) => {
 						.then(async (downloadurl) => {
 							console.log(downloadurl);
 							try {
-								const planRef = doc(db, "plans", itemId);
+								const planRef = doc(db, "plans", planId);
 								await updateDoc(planRef, { thumbnail: downloadurl });
 							} catch (error) {
 								console.error("updating doc error", error);

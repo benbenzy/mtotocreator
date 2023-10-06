@@ -22,14 +22,14 @@ const OfflinePlans = () => {
 		<ThemeView style={{ flex: 1 }}>
 			<FlatList
 				data={draftPlans}
-				keyExtractor={(item) => `draft-plans${item.key}`}
+				keyExtractor={(item) => `draft-plans${item.id}`}
 				renderItem={({ item, index }: planItem) => {
 					return (
 						<PlanCard
 							item={item}
 							containerStyle={{ marginBottom: index === draftPlans.length - 1 ? 100 : SIZES.base }}
 							onPress={() => {
-								router.push({ pathname: "addContent", params: { id: item.key, draft: true } });
+								router.push({ pathname: "/addContent", params: { id: item.id, draft: true } });
 							}}
 							pressdelete={() =>
 								Platform.OS != "web"
