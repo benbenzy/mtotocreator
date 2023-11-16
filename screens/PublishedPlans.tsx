@@ -41,9 +41,11 @@ const PublishedPlans = () => {
 						<PlanCard
 							item={item}
 							onPress={() => {
-								router.push({ pathname: "/addContent" }), setItemId(item.id);
-							}}
-						/>
+								router.push({ pathname: "/read", params: { id: item.id, draft: false } })
+							} } 
+							pressdelete={undefined} 
+							publish={undefined}
+							 more={undefined}/>
 					);
 				}}
 			/>

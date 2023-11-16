@@ -2,14 +2,14 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { ThemeText, ThemeView } from "../components/Themed";
 
-const CreateBook = () => {
-	return (
-		<ThemeView>
-			<ThemeText>CreateBook</ThemeText>
-		</ThemeView>
-	);
+const read = () => {
+  return (
+    <ThemeView>
+      <ThemeText>read</ThemeText>
+    </ThemeView>
+  );
 };
 
-export default CreateBook;
+export default read;
 
 const styles = StyleSheet.create({});

@@ -76,6 +76,10 @@ function RootLayoutNav() {
 												name="plans"
 												options={{}}
 											/>
+											<Stack.Screen
+												name="read"
+												options={{}}
+											/>
 										</Stack>
 									</SelectedItemProvider>
 								</PlansProvider>

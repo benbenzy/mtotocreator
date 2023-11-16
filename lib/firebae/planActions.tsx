@@ -1,14 +1,11 @@
 /** @format */
 
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
-import { ContentItem, Plan } from "../../interface";
-import { API_URL, TOKEN } from "../api/config";
-import { auth, db, storage } from "../../firebaseConfig";
+import { db, storage } from "../../firebaseConfig";
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useAuthSession } from "../../context/AuthContext";
 import React, { PropsWithChildren } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { useSelectedItem } from "../../context/SelectedItemContext";
 
 interface planActionsProps {
 	createPlan: any;
@@ -50,12 +47,10 @@ const PlansProvider = ({ children }: PropsWithChildren) => {
 	}
 
 	const uploadImage = async (
-		image: any,
-		title: string,
-		setProgress: any,
-		setError: any,
-		planId: string
+		{image,
+		planId}:any
 	) => {
+		console.log("planID",planId)
 		if (planId) {
 			const apkimagesref = ref(storage, "images/" + planId);
 			const apkimage = await fetch(image);
@@ -65,12 +60,13 @@ const PlansProvider = ({ children }: PropsWithChildren) => {
 			};
 
 			const imageresult = uploadBytesResumable(apkimagesref, blob, metadata);
+			console.log("image result",imageresult)
 
 			imageresult.on(
 				"state_changed",
 				(snapshot) => {
 					const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-					console.log(progress);
+					console.log("progress",progress);
 					switch (snapshot.state) {
 						case "paused":
 							break;
@@ -104,7 +100,10 @@ const PlansProvider = ({ children }: PropsWithChildren) => {
 							console.log(downloadurl);
 							try {
 								const planRef = doc(db, "plans", planId);
-								await updateDoc(planRef, { thumbnail: downloadurl });
+								await updateDoc(planRef, { thumbnail: downloadurl }).then(()=>{;
+								console.log("updated")
+								return "success"
+								})
 							} catch (error) {
 								console.error("updating doc error", error);
 								try {

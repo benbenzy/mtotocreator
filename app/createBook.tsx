@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addPlan } from "../store/plans/planSlice";
-import { Plan } from "../interface";
+import { Book, Plan } from "../interface";
 import { ThemeText, ThemeView } from "../components/Themed";
 import { COLORS, Colors, FONTS } from "../constants";
 
@@ -21,19 +21,22 @@ import InputComponent from "../components/InputComponent";
 import { FontAwesome } from "@expo/vector-icons";
 import { usePlanActions } from "../lib/firebae/planActions";
 import { useRouter } from "expo-router";
+import { addBook } from "../store/books/bookSlice";
 
 const WIDTH = Dimensions.get("window").width;
 
-export default function CreatePlan() {
+export default function CreateBook() {
   const colorScheme = useColorScheme();
   const plans = useSelector((state: any) => state.plans.draftPlans);
   const dispatch = useDispatch();
   const [planId, setPlanId] = useState("");
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [prologue, setPrologue] = useState("");
   const [price, setPrice] = useState("0");
+  const [image, setImage] = useState("");
   const [progress, setProgress] = useState(false);
   const [category, setCategory] = useState("uncategorized");
+  const [content, setContent] = useState([]);
   const [error, setError] = useState("");
 
   const [chooseCategory, setChooseCategory] = useState(false);
@@ -51,36 +54,20 @@ export default function CreatePlan() {
   ]);
 
   const { createPlan, selectImage, uploadImage } = usePlanActions();
-  const plan: Plan = {
+  const book: Book = {
     title,
-    description,
-    image: "",
+    prologue,
+    image,
     price,
     category,
-    content: [],
+    chapters: [],
     id: plans.length + 1,
-    thumbnail: "",
+    author: "",
+    publisher: "",
   };
   const router = useRouter();
-  function submitPlan() {
-    // dispatch(addPlan(plan));
-    setProgress(true);
-    createPlan(plan)
-      .then((res: React.SetStateAction<string>) => {
-        setPlanId(res);
-        setProgress(false);
-        console.log(planId);
-      })
-      .then(() => {
-        router.replace({ pathname: "/addContent", params: { id: planId } });
-      })
 
-      .catch((err: any) => {
-        Alert.alert("error publishing post", err);
-        setProgress(false);
-      });
-  }
-  const disabled = !title || !description || !price;
+  const disabled = !title || !prologue || !price;
 
   return (
     <ThemeView style={styles.main}>
@@ -103,8 +90,8 @@ export default function CreatePlan() {
         <InputComponent
           title={"description"}
           placeholder={"plan description"}
-          value={description}
-          setValue={setDescription}
+          value={prologue}
+          setValue={setPrologue}
         />
         <InputComponent
           title={"price"}
@@ -163,7 +150,7 @@ export default function CreatePlan() {
         disabled={disabled}
         onPress={
           () => {
-            const res = dispatch(addPlan(plan));
+            const res = dispatch(addBook(book));
             //console.log(res.payload);
             if (res) {
               router.replace({
@@ -190,8 +177,6 @@ export default function CreatePlan() {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    //alignItems: "center",
-    //justifyContent: "center",
   },
   title: {
     fontSize: 15,

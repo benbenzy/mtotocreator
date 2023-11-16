@@ -2,125 +2,138 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Book, Plan } from "../../interface";
 
 interface Activity {
-	// Properties of an activity
+  // Properties of an activity
 }
 
 interface RootState {
-	[x: string]: any;
-	draftBooks: Book[];
-	[key: number]: Book;
+  [x: string]: any;
+  draftBooks: Book[];
+  [key: number]: Book;
 }
 
 interface AddBookAction {
-	type: "addPlan";
-	payload: Book;
+  type: "addPlan";
+  payload: Book;
 }
 
 interface UpdateBookAction {
-	type: "updatePlan";
-	payload: Book;
+  type: "updatePlan";
+  payload: Book;
 }
 
 interface DeleteBookAction {
-	type: "deletePlan";
-	payload: { id: number };
+  type: "deletePlan";
+  payload: { id: number };
 }
 
 interface UpdateChapterAction {
-	type: "updateSinglePlan";
-	payload: Book;
+  type: "updateSinglePlan";
+  payload: Book;
 }
 
 interface CreateChapterAction {
-	type: "addActivity";
-	payload: {
-		planId: number;
-		activity: Activity;
-	};
+  type: "addActivity";
+  payload: {
+    planId: number;
+    activity: Activity;
+  };
 }
 interface ClearAllAction {
-	type: "clearAll";
+  type: "clearAll";
 }
 
 type Action =
-	| AddBookAction
-	| UpdateBookAction
-	| DeleteBookAction
-	| CreateChapterAction
-	| UpdateChapterAction
-	| ClearAllAction;
+  | AddBookAction
+  | UpdateBookAction
+  | DeleteBookAction
+  | CreateChapterAction
+  | UpdateChapterAction
+  | ClearAllAction;
 
 const initialState: RootState = {
-	draftBooks: [],
+  draftBooks: [],
 };
 const bookSlice = createSlice({
-	name: "plans",
-	initialState,
-	reducers: {
-		addBook: (state: RootState, action) => {
-			state.draftPlans.push(action.payload);
-		},
-		updateBook: (state: RootState, action) => {
-			const index = state.draftPlans.findIndex(
-				(book: any) => book.key === action.payload.id
-			);
-			state[index] = action.payload;
-		},
-		deleteBook: (state: RootState, action) => {
-			const itemKey = action.payload.key;
-			let newPlans = [...state.draftPlans];
-			let index = state.draftPlans.findIndex(
-				(book: any) => book.key === itemKey
-			);
-			newPlans.splice(index, 1);
-			state.draftPlans = newPlans;
-		},
-		clearAll: (state: RootState) => {
-			state.draftPlans = [];
-		},
+  name: "plans",
+  initialState,
+  reducers: {
+    addBook: (state: RootState, action) => {
+      state.draftBooks.push(action.payload);
+    },
+    updateBook: (state: RootState, action) => {
+      const index = state.draftPlans.findIndex(
+        (book: any) => book.key === action.payload.id
+      );
+      state[index] = action.payload;
+    },
+    deleteBook: (state: RootState, action) => {
+      const itemKey = action.payload.key;
+      let newPlans = [...state.draftPlans];
+      let index = state.draftPlans.findIndex(
+        (book: any) => book.key === itemKey
+      );
+      newPlans.splice(index, 1);
+      state.draftPlans = newPlans;
+    },
+    clearAll: (state: RootState) => {
+      state.draftPlans = [];
+    },
 
-		addChapter: (state, action) => {
-			const { planId, activity } = action.payload;
-			let allPlans = [...state.draftPlans];
-			let PLan = allPlans.find((item) => item.key == planId);
-			let planContent = [...PLan!.content];
-			console.log(planContent);
-			planContent.push({ ...activity, key: planContent.length + 1 });
-			PLan!.content = planContent;
-			state.draftPlans = allPlans;
-		},
-		updateChapter: (state, action) => {
-			const index = state.draftPlans.findIndex(
-				(book: any) => book.key === action.payload.key
-			);
-			state.draftPlans[index] = action.payload;
-		},
-		// deleteContent:(state:RootState,action)=>{
+    addChapter: (state, action) => {
+      const { bookId, title } = action.payload;
+      let allBooks = [...state.draftBooks];
+      let Book = allBooks.find((item: Book) => item.id == bookId);
+      let Chapters = [...Book!.chapters];
+      Chapters.push({
+        ...title,
+        content: [],
+        key: `Chapter ${Chapters.length + 1}`,
+      });
+      Book!.chapters = Chapters;
+      state.draftPlans = allBooks;
+    },
+    updateChapter: (state, action) => {
+      const { id, title } = action.payload;
+      const index = state.draftPlans.findIndex((book: Book) => book.id === id);
+      state.draftPlans[index].title = title;
+    },
+    addContentToChapter: (state: RootState, action) => {
+      const { id, key, title, body } = action.payload;
+      let AllBooks = { ...state.draftBooks };
+      const index = AllBooks.findIndex((item) => item.id == id);
+      let Chapters = [...AllBooks[index].chapters];
+      let chapter = Chapters.findIndex((item) => {
+        item.key == key;
+      });
 
-		// 	const plan =state.draftPlans.find((plan)=>plan===action.payload)
-		// 	//const index =state.draftPlans.findIndex((plan)=>plan.key===action.payload.key)
-		// 	if(!plan){
-		// 		throw new Error("plan not found");
+      Chapters[chapter].content.push({ ...title, body });
+    },
+    // deleteContent:(state:RootState,action)=>{
 
-		// 	}
-		// 	let planContent = [...plan!.content]
-		// 	let index = planContent.findIndex((content)=>content.key===action.payload.key)
-		// 	const newPlan=planContent.splice(index,1)
+    // 	const plan =state.draftPlans.find((plan)=>plan===action.payload)
+    // 	//const index =state.draftPlans.findIndex((plan)=>plan.key===action.payload.key)
+    // 	if(!plan){
+    // 		throw new Error("plan not found");
 
-		// 	planContent=[...newPlan]
+    // 	}
+    // 	let planContent = [...plan!.content]
+    // 	let index = planContent.findIndex((content)=>content.key===action.payload.key)
+    // 	const newPlan=planContent.splice(index,1)
 
-		// }
-	},
+    // 	planContent=[...newPlan]
+
+    // }
+  },
 });
 export const {
-	addBook,
-	updateBook,
-	deleteBook,
-	addChapter,
-    updateChapter,
-	clearAll,
+  addBook,
+  updateBook,
+  deleteBook,
+  addChapter,
+  updateChapter,
+  clearAll,
 } = bookSlice.actions;
 
 const BooksReducer = bookSlice.reducer;
-export const selectBooks = (state: RootState) => state.draftBooks
+export const selectBooks = (state: RootState) => state.draftBooks;
 export default BooksReducer;
