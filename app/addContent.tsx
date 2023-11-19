@@ -87,11 +87,11 @@ const addContent = () => {
   }, [router]);
 
   // edit plan function
-  function editPlan() {
+  function editPlan(id: any) {
     router.push({
       pathname: "/planEditor",
       params: {
-        id: selectedItem?.id,
+        id,
         itemTitle: "",
         title: selectedItem.title,
         description: selectedItem.description,
@@ -235,7 +235,7 @@ const addContent = () => {
               title
             </ThemeText>
             <TouchableOpacity
-              onPress={editPlan}
+              onPress={() => editPlan(selectedItem.id)}
               style={{ flexDirection: "row" }}>
               <Image
                 source={icons.filter}
