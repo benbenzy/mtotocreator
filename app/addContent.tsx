@@ -94,7 +94,6 @@ const addContent = () => {
         id,
         itemTitle: "",
         title: selectedItem.title,
-        description: selectedItem.description,
       },
     });
   }
@@ -106,7 +105,6 @@ const addContent = () => {
         id: selectedItem?.id,
         itemTitle: itemTitle,
         title: "",
-        description: "",
       },
     });
   }
@@ -118,7 +116,6 @@ const addContent = () => {
         id: selectedItem?.id,
         itemTitle: "",
         title: "",
-        description: "",
       },
     });
   }

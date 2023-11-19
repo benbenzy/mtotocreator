@@ -62,6 +62,16 @@ const planSlice = createSlice({
   initialState,
   reducers: {
     addPlan: (state: RootState, action) => {
+      let id = "";
+      let allPlans = [...state.draftPlans];
+      const unique = allPlans.findIndex(
+        (item) => item.id == allPlans.length + 1
+      );
+      if (unique == 1) {
+        id = String(allPlans.length + 2);
+      } else {
+        id = String(allPlans.length + 1);
+      }
       state.draftPlans.push({ ...action.payload, quize: [] });
     },
     updatePlan: (state: RootState, action) => {
